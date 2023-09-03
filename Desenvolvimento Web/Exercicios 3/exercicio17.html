@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercicio 17</title>
+</head>
+<body>
+    <form action="https://jkorpela.fi/cgi-bin/echo.cgi" method="get">
+        <fieldset>
+            <legend>Dados pessoais:</legend>
+            Nome: <input type="text" id="Nome" name="Nome" /> <br />
+            Idade: <input type="text" id="Idade" name="Idade" /> <br />
+            </fieldset>
+
+            <fieldset>
+                <legend>Dados profissionais:</legend>
+                <datalist id="Escolaridade">
+                    <option value="Ensino Fundamenal Incompleto"></option>
+                    <option value="Ensino Fundamental Completo"></option>
+                    <option value="Ensino Médio Incompleto"></option>
+                    <option value="Ensino Médio Completo"></option>
+                    <option value="Ensino Superior Incompleto"></option>
+                    <option value="Ensino Superior Cursando"></option>
+                    <option value="Ensino superior Completo"></option>
+                </datalist>
+                <label for="Escolaridade">Escolaridade:</label>
+                <input list="Escolaridade" name="minhalista" id="minhalista" />
+                <br />
+                Area de Atuação:
+                <input type="radio" id="Gerencia" name="Area" value="Gerencia" />
+                <label for="Gerencia">Gerência</label>
+                <input type="radio" id="Financeiro" name="Area" value="Financeiro" />
+                <label for="Financeiro">Financeiro</label>
+                <input type="radio" id="Recepção" name="Area" value="Recepção" />
+                <label for="Recepção">Recepção</label> <br />
+                </fieldset>
+</body>
+</html>
