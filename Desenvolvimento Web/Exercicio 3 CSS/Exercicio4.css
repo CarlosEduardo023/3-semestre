@@ -1,0 +1,9 @@
+body {background-color: lightblue;}
+h1 {background-color: yellow;text-align: justify; padding-left: 30px; }
+#um {background-color: gray; text-align: center;}
+#azul {color: blue;font-size:20px; padding-left: 30px; }
+#texto {padding-left: 30px; }
+.negrito {font-weight: bold;}
+.vermelho {color: red; font-weight: bold;}
+#dois {background-color: gray; text-align: center;}
+h6 {font-style: italic; color: gray;}
