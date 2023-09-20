@@ -1,0 +1,100 @@
+1) Rodar o script de criação das tabelas NOTA e ALUNO (aula 3)
+
+SCRIPT
+
+CREATE TABLE [dbo].[nota](
+    [idnota] [int] IDENTITY(1,1) NOT NULL,
+    [idaluno] [int] NULL,
+    [n1] [decimal](10, 2) NULL,
+    [n2] [decimal](10, 2) NULL,
+    [n3] [decimal](10, 2) NULL
+) ON [PRIMARY]
+GO
+CREATE TABLE [dbo].[aluno](
+    [idaluno] [int] IDENTITY(1,1) NOT NULL,
+    [nome] [varchar](50) NULL
+) ON [PRIMARY]
+GO
+insert into aluno (nome)
+select 'ANA' union select 'Jose' union select 'Bete'
+go
+insert into nota (idaluno, n1,n2,n3)
+select 1, 10,2, 0 union
+select 2, 4,4,4    union
+select 3, 5, 5,8
+go
+
+2) Criar um relatório que apresente
+    Aluno    N1    N2   MédiaFinal
+
+select a.nome,
+        n.n1,
+        n.n2,
+        media = (n.n1 + n.n2)/2
+from aluno a inner join
+    nota n on a.idaluno = n.idaluno
+order by a.nome
+
+3) Criar uma procedure getExtratoNotas para retornar o relatório acima
+
+create procedure getExtratoNotas
+as begin
+    select aluno = a.nome,
+        n.n1,
+        n.n2,
+        mediafinal = (n.n1 + n.n2)/2
+    from aluno a inner join
+    nota n on a.idaluno = n.idaluno
+    order by a.nome
+end 
+______________________________________________________________________
+
+exec getExtratoNotas
+
+4) Alterar a procedure getExtratoNotas
+     - inserir um parametro inteiro chamado @idAluno
+     - caso a procedure receba um valor de @idAluno diferente de NULL, apresentar os dados do aluno
+    - caso receba NULL, apresentar todos os alunos
+    - tratar o caso de @idAluno não existir, retornando mensagem indicativa
+
+alter PROCEDURE getExtratoNotas (@idAluno INT=null)
+AS
+BEGIN
+    -- -----------------------------------------------------------
+    IF @idAluno IS NOT NULL BEGIN
+
+       IF NOT EXISTS (SELECT * from aluno where idAluno=@idAluno)
+          print 'ALUNO NAO EXISTE'
+       ELSE
+          select a.nome,n.n1,n.n2, media = (n.n1 + n.n2)/2
+          from aluno a inner join
+               nota n on a.idaluno = n.idaluno
+          WHERE a.idAluno=@idAluno
+          order by a.nome
+    END
+    -- -----------------------------------------------------------
+    ELSE
+        select a.nome,n.n1,n.n2, media = (n.n1 + n.n2)/2
+        from aluno a inner join
+            nota n on a.idaluno = n.idaluno
+        order by a.nome
+END
+
+5) Criar uma nova procedure chamada setNotaN1
+    - receber como entrada @idAluno e @nota
+   - atualizar a nota N1 do aluno 
+     Sintaxe do comando UPDATE
+               UPDATE tabela
+                     SET coluna=valor
+                     WHERE filtro
+
+create procedure setNotaN1 (@idaluno int,@n1 decimal)
+as begin
+	update nota
+	set n1 = @n1
+	where idaluno = @idaluno
+end
+
+select * from nota
+exec setNotaN1 1 , 9
+select * from nota
