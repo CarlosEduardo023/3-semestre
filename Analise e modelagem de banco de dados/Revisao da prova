@@ -1,0 +1,98 @@
+-- TABELA AUXILIAR  
+
+CREATE TABLE status(
+    idStatus INT NOT NULL IDENTITY PRIMARY KEY,
+    descricao varchar(50),
+);
+
+-- TABELAS PRINCIPAIS
+
+CREATE TABLE cliente (
+    idCliente int NOT NULL identity PRIMARY KEY,
+    CPF VARCHAR(11) ,
+    nome VARCHAR(45),
+    nascimento DATE,
+);
+CREATE TABLE pedido (
+    idPedido  INT not null IDENTITY PRIMARY KEY,
+    idStatus  INT NOT NULL,
+    idCliente INT not null,
+    valor DECIMAL(10,2),
+    data  DATE,
+    FOREIGN KEY (idStatus)  REFERENCES status (idStatus),
+    FOREIGN KEY (idCliente) REFERENCES cliente(idCliente),
+);
+CREATE TABLE produto (
+    idProduto INT NOT NULL IDENTITY PRIMARY KEY,
+    descricao VARCHAR(45),
+    valor DECIMAL(10,2),
+);
+
+-- ITENS = CARRINHO
+CREATE TABLE item (
+    idItem    INT NOT NULL IDENTITY PRIMARY KEY,
+    idPedido  INT NOT NULL,
+    idProduto INT NOT NULL,
+    quantidade INT,
+    valor DECIMAL(10,2),
+    FOREIGN KEY (idPedido)  REFERENCES pedido(idPedido),
+    FOREIGN KEY (idProduto) REFERENCES produto(idProduto)
+);
+
+---------------------------------------------------------------------------------------------------------
+
+-- ---------------------------
+INSERT INTO    status (descricao)
+    VALUES
+    ('Em andamento'),
+    ('Concluído');
+-- ------------------------
+INSERT INTO    cliente (CPF, nome, nascimento)
+    VALUES
+    ('12745678801', 'João Silva', '1990-01-15'),
+    ('98745732109', 'Maria Souza', '1985-05-20');
+-- -------------------
+INSERT INTO    produto (descricao, valor)
+    VALUES
+    ('Coca-cola', 10.00),
+    ('xBurger', 15.50),
+    ('xSalada', 20.00);
+-- ---------------------------
+INSERT INTO    pedido (idstatus, idcliente, valor, data)
+select                   1,         1,        1000, getdate()
+-- -----------------------
+INSERT INTO    item (idPedido, idProduto, quantidade, valor)
+select                 1,         1,         100,      1000
+-- -------------------------
+select * from item
+select * from produto
+select * from pedido
+select * from status
+select * from cliente
+------------------------------------------------------------------------------------------------------------
+
+--Selecionando os dados solicitados
+
+select NumeroPedido = p.idpedido,
+	   NomedoCliente = c.nome,
+	   Valor = p.valor,
+	   Data = p.data,
+	   Descrição = s.descricao
+from cliente c inner join pedido p on c.idcliente = p.idcliente inner join
+status s on s.idstatus = p.idstatus
+
+----------------------------------------------------------------------------------------------------------------
+
+--Aumentando todos os preços
+
+select * from produto
+update produto set valor =valor + 2 
+select * from produto
+
+---------------------------------------------------------------------------------------------------------------
+
+--Deletando um cliente e todas as tabelas nas quais ele interfere
+
+delete item where idpedido = (select idpedido from pedido where idcliente =1)
+delete pedido where idcliente = 1
+delete cliente where idcliente = 1
