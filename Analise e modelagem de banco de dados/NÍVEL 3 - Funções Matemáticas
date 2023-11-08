@@ -1,0 +1,12 @@
+-- 1.  total de descontos concedidos por meio de cupom
+select TotalDeDescontos=sum (desconto)
+from pedido where idcupom is not null
+go
+-- 2. quantidade de pedidos por cliente
+select idcliente,
+       QuantidadeDePedidos =count(idcliente) 
+       from pedido 
+       group by idcliente
+go
+-- 3. id dos clientes que só fizeram um pedido
+select idcliente from pedido where 
