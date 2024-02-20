@@ -1,0 +1,7 @@
+1- Abra o visual studio code
+2- Abra o arquivo Crud - Carlos
+3- Inicie o Xampp e clique no botão start no MySQL e no Apache
+4- Crie a tabela professores no mysql
+5- No terminal de comando do VSC escreva o comando npm init e clique enter em todas as opções
+6- Depois escreva npm install cors express mysql
+7- Por ultimo escreva node server1.js

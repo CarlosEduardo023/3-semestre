@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Gerenciamento de Professores</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+  <div class="container mt-5">
+    <h1 class="mb-4">Gerenciamento de Professores</h1>
+
+    <div class="mb-4">
+      <h2>Adicionar Novo Professor:</h2>
+      <form id="addProfessorForm">
+        <div class="form-group">
+          <label for="professorName">Nome:</label>
+          <input type="text" class="form-control" id="professorName" required>
+        </div>
+
+        <div class="form-group">
+          <label for="professorEmail">Email:</label>
+          <input type="email" class="form-control" id="professorEmail" required>
+        </div>
+
+        <div class="form-group">
+          <label for="professorCPF">CPF:</label>
+          <input type="text" class="form-control" id="professorCPF" required>
+        </div>
+
+        <div class="form-group">
+          <label for="professorSubject">Matéria Lecionada:</label>
+          <input type="text" class="form-control" id="professorSubject" required>
+        </div>
+
+        <div class="form-group">
+          <label for="professorPhone">Telefone:</label>
+          <input type="text" class="form-control" id="professorPhone" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Adicionar Professor</button>
+      </form>
+    </div>
+
+    <hr>
+
+    <div class="mb-4">
+      <h2>Professores Existente:</h2>
+      <div id="professoresList">
+        <!-- Lista de professores será exibida aqui -->
+      </div>
+    </div>
+
+    <div id="editProfessorForm" class="mb-4" style="display: none;">
+      <h2>Editar Professor</h2>
+      <form id="updateProfessorForm">
+        <input type="hidden" id="editProfessorId">
+        <div class="form-group">
+          <label for="editProfessorName">Nome:</label>
+          <input type="text" class="form-control" id="editProfessorName" required>
+        </div>
+
+        <div class="form-group">
+          <label for="editProfessorEmail">Email:</label>
+          <input type="email" class="form-control" id="editProfessorEmail" required>
+        </div>
+
+        <div class="form-group">
+          <label for="editProfessorCPF">CPF:</label>
+          <input type="text" class="form-control" id="editProfessorCPF" required>
+        </div>
+
+        <div class="form-group">
+          <label for="editProfessorSubject">Matéria Lecionada:</label>
+          <input type="text" class="form-control" id="editProfessorSubject" required>
+        </div>
+
+        <div class="form-group">
+          <label for="editProfessorPhone">Telefone:</label>
+          <input type="text" class="form-control" id="editProfessorPhone" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+        <button type="button" class="btn btn-secondary" onclick="cancelEdit()">Cancelar</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const apiUrl = 'http://localhost:3000/professores';
+
+    function displayProfessores(professores) {
+      const professoresList = document.getElementById('professoresList');
+      professoresList.innerHTML = '';
+
+      professores.forEach(professor => {
+        const professorElement = document.createElement('div');
+        professorElement.innerHTML = `
+          <p>ID: ${professor.id}</p>
+          <p>Nome: ${professor.Nome}</p>
+          <p>Email: ${professor.email}</p>
+          <p>CPF: ${professor.CPF}</p>
+          <p>Matéria Lecionada: ${professor.Materia_lecionada}</p>
+          <p>Telefone: ${professor.Telefone}</p>
+          <button onclick="updateProfessor(${professor.id})">Editar</button>
+          <button onclick="deleteProfessor(${professor.id})">Excluir</button>
+          <hr>
+        `;
+        professoresList.appendChild(professorElement);
+      });
+    }
+
+    function getProfessores() {
+      fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => displayProfessores(data))
+        .catch(error => console.error('Erro:', error));
+    }
+
+    document.getElementById('addProfessorForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const professorName = document.getElementById('professorName').value;
+      const professorEmail = document.getElementById('professorEmail').value;
+      const professorCPF = document.getElementById('professorCPF').value;
+      const professorSubject = document.getElementById('professorSubject').value;
+      const professorPhone = document.getElementById('professorPhone').value;
+
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          Nome: professorName,
+          email: professorEmail,
+          CPF: professorCPF,
+          Materia_lecionada: professorSubject,
+          Telefone: professorPhone
+        })
+      })
+        .then(response => response.json())
+        .then(data => {
+          getProfessores();
+          document.getElementById('addProfessorForm').reset();
+        })
+        .catch(error => console.error('Erro:', error));
+    });
+
+    function updateProfessor(id) {
+      fetch(`${apiUrl}/${id}`)
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('editProfessorId').value = data.id;
+          document.getElementById('editProfessorName').value = data.Nome;
+          document.getElementById('editProfessorEmail').value = data.email;
+          document.getElementById('editProfessorCPF').value = data.CPF;
+          document.getElementById('editProfessorSubject').value = data.Materia_lecionada;
+          document.getElementById('editProfessorPhone').value = data.Telefone;
+          document.getElementById('editProfessorForm').style.display = 'block';
+        })
+        .catch(error => console.error('Erro:', error));
+    }
+
+    document.getElementById('updateProfessorForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const professorId = document.getElementById('editProfessorId').value;
+      const professorName = document.getElementById('editProfessorName').value;
+      const professorEmail = document.getElementById('editProfessorEmail').value;
+      const professorCPF = document.getElementById('editProfessorCPF').value;
+      const professorSubject = document.getElementById('editProfessorSubject').value;
+      const professorPhone = document.getElementById('editProfessorPhone').value;
+
+      fetch(`${apiUrl}/${professorId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          Nome: professorName,
+          email: professorEmail,
+          CPF: professorCPF,
+          Materia_lecionada: professorSubject,
+          Telefone: professorPhone
+        })
+      })
+        .then(response => response.json())
+        .then(data => {
+          getProfessores();
+          document.getElementById('editProfessorForm').style.display = 'none';
+        })
+        .catch(error => console.error('Erro:', error));
+    });
+
+    function cancelEdit() {
+      document.getElementById('editProfessorForm').style.display = 'none';
+    }
+
+    function deleteProfessor(id) {
+      fetch(`${apiUrl}/${id}`, {
+        method: 'DELETE'
+      })
+        .then(response => response.json())
+        .then(data => {
+          getProfessores();
+        })
+        .catch(error => console.error('Erro:', error));
+    }
+
+    getProfessores();
+  </script>
+   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
